@@ -58,7 +58,7 @@ void ANetworkPlayerController::BeginPlay()
 
 	FIPv4Endpoint Endpoint(addr);
 
-	Socket = FTcpSocketBuilder(TEXT("default")).AsReusable().BoundToEndpoint(Endpoint).Listening(8);
+	Socket = FTcpSocketBuilder(TEXT("default")).AsReusable().BoundToEndpoint(Endpoint).Listening(16);
 
 	int32 new_size;
 	Socket->SetReceiveBufferSize(2 << 20, new_size);
