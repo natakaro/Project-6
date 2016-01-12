@@ -53,22 +53,32 @@ void ANetworkPlayerController::BeginPlay()
 	bool valid = true;
 
 	TSharedRef<FInternetAddr> addr = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
+	//ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->GetLocalHostAddr;
 	addr->SetIp(*address, valid);
 	addr->SetPort(port);
+	//addr->GetIp(addresssss);
 
 	FIPv4Endpoint Endpoint(addr);
 
 	Socket = FTcpSocketBuilder(TEXT("default")).AsReusable().BoundToEndpoint(Endpoint).Listening(16);
-
+	//Socket->GetAddress(*adddre);
 	int32 new_size;
 	Socket->SetReceiveBufferSize(2 << 20, new_size);
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Connection ~> %d"), Socket != nullptr));
-
 	FTimerHandle czaso;
 	GetWorldTimerManager().ClearTimer(czaso);
 	GetWorldTimerManager().SetTimer(czaso, this, &ANetworkPlayerController::TCPConnectionListener, 0.01f, true);//*/
+	
+	bool canBind = false;
+	TSharedRef<FInternetAddr> localIp = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->GetLocalHostAddr(*GLog, canBind);
 
+	if (localIp->IsValid())
+	{
+		GLog->Log(localIp->ToString(false)); // if you want to append the port (true) or not (false).
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, localIp->ToString(false));
+		IP = localIp->ToString(false);
+	}
 }
 
 // Called every frame
@@ -82,8 +92,10 @@ void ANetworkPlayerController::TCPConnectionListener()
 	if (!Socket) return;
 
 	//Remote address
+	//RemoteAddress = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
 	RemoteAddress = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
 	bool Pending;
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, RemoteAddress->ToString(true));
 
 	// handle incoming connections
 	if (Socket->HasPendingConnection(Pending) && Pending)
@@ -99,6 +111,7 @@ void ANetworkPlayerController::TCPConnectionListener()
 
 		//New Connection receive!
 		Connection = Socket->Accept(*RemoteAddress, TEXT("connection"));
+		
 
 		if (Connection != NULL)
 		{
@@ -124,15 +137,18 @@ void ANetworkPlayerController::TCPSocketListener()
 	if (!Connection) return;
 
 	TArray<uint8> ReceivedData;
-
 	uint32 Size;
+
 	while (Connection->HasPendingData(Size))
 	{
 		ReceivedData.SetNumUninitialized(FMath::Min(Size, 65507u));
 		//ReceivedData.Init(FMath::Min(Size, 65507u));
 		int32 Read = 0;
 		Connection->Recv(ReceivedData.GetData(), ReceivedData.Num(), Read);
-
+		//FInternetAddr OutAddr = new FInternetAddr();
+		//->GetPeerAddress(OutAddr);
+		//Connection->GetAddress(FInternetAddr::FInternetAddr);
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "as");
 		
 	}
 
@@ -154,6 +170,8 @@ void ANetworkPlayerController::TCPSocketListener()
 	roll = -FMath::RadiansToDegrees(angles[length - 2]);
 	shoot = angles[length - 1];
 
+	//FInternetAddr::GetIp;
+	//FString a = FInternetAddr::ToString(true);
 	/*pitch = -FMath::RadiansToDegrees(angles[length - 2]);
 	yaw = FMath::RadiansToDegrees(angles[length - 3]);*/
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%f %f %f"), pitch, yaw, shoot));

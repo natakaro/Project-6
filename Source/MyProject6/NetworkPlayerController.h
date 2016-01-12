@@ -25,6 +25,10 @@ public:
 		float yaw;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PitchYawRoll)
 		float roll;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Connetttt)
+		FString IP;
+
+
 	// Sets default values for this actor's properties
 	ANetworkPlayerController(const FObjectInitializer& ObjectInitializer);
 
