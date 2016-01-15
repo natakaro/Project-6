@@ -1,10 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
-
+#include "MyGameInstance.h"
 #include "GameFramework/PlayerController.h"
 #include "Runtime/Networking/Public/Networking.h"
 #include "NetworkPlayerController.generated.h"
+
 
 /**
  * 
@@ -29,6 +30,7 @@ public:
 		FString IP;
 
 
+	
 	// Sets default values for this actor's properties
 	ANetworkPlayerController(const FObjectInitializer& ObjectInitializer);
 
@@ -39,14 +41,12 @@ public:
 
 	// Called every frame
 	virtual void Tick(float DeltaSeconds) override;
-
-	void TCPConnectionListener();
-	void TCPSocketListener();
+	void connect();
 	FString StringFromBinaryArray(const TArray<uint8>& BinaryArray);
-private:
-	FSocket* Socket;
-	FSocket* Connection;
-	TSharedPtr<FInternetAddr> RemoteAddress;
+
+	//FSocket* Socket;
+	//FSocket* Connection;
+	UMyGameInstance *SGI;
 	
 	
 };
